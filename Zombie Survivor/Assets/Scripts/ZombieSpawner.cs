@@ -13,7 +13,8 @@ public class ZombieSpawner : MonoBehaviour {
 
     private void Awake()
     {
-        zombieDatas[0] = ResourceManager.instance.zombieData_default;
+        zombieDatas = ResourceManager.instance.zombieData_default;      
+
     }
     private void Update() {
         // 게임 오버 상태일때는 생성하지 않음
