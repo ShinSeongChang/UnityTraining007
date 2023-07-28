@@ -137,7 +137,7 @@ public class Gun : MonoBehaviour {
         }
 
         magAmmo += ammoToFill;
-        ammoRemain += ammoToFill;
+        ammoRemain -= ammoToFill;
 
         // 총의 현재 상태를 발사 준비된 상태로 변경
         state = State.Ready;

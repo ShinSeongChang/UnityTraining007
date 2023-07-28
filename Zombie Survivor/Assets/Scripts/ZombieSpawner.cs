@@ -11,6 +11,10 @@ public class ZombieSpawner : MonoBehaviour {
     private List<Zombie> zombies = new List<Zombie>(); // 생성된 좀비들을 담는 리스트
     private int wave; // 현재 웨이브
 
+    private void Awake()
+    {
+        zombieDatas[0] = ResourceManager.instance.zombieData_default;
+    }
     private void Update() {
         // 게임 오버 상태일때는 생성하지 않음
         if (GameManager.instance != null && GameManager.instance.isGameover)
@@ -36,11 +40,29 @@ public class ZombieSpawner : MonoBehaviour {
 
     // 현재 웨이브에 맞춰 좀비들을 생성
     private void SpawnWave() {
+        wave += 1;
 
+        int spawnCount = Mathf.RoundToInt(wave * 1.5f);
+
+        for(int i = 0; i < spawnCount; i++)
+        {
+            CreateZombie();
+        }
     }
 
     // 좀비를 생성하고 생성한 좀비에게 추적할 대상을 할당
     private void CreateZombie() {
+        ZombieData zombieData = zombieDatas[Random.Range(0, zombieDatas.Length)];
+        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
 
+        Zombie zombie = Instantiate(zombiePrefab, spawnPoint.position, spawnPoint.rotation);
+        zombie.Setup(zombieData);
+        zombies.Add(zombie);
+
+        // 좀비가 죽으면 아래에 등록해 놓은 메서드를 모두 실행하겠다는 의미다. (델리게이트)
+        zombie.onDeath += () => zombies.Remove(zombie);
+        zombie.onDeath += () => Destroy(zombie.gameObject, 10f);
+        zombie.onDeath += () => GameManager.instance.AddScore(100);
     }
+
 }
